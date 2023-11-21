@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Babylon.js Project</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        #propertiesTable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #propertiesTable td, #propertiesTable th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #renderCanvas {
+            width: 75%;
+            height: 400px;
+        }
+
+        #content {
+        display: flex;
+        align-items: start;
+        justify-content: center;
+        }
+
+        #renderCanvas {
+        width: 70%; /* Adjust as needed */
+        height: 600px; /* Adjust as needed */
+        border: 1px solid black;
+    }
+
+    #propertiesPanel {
+        width: 30%; /* Adjust as needed */
+        height: 600px; /* Adjust as needed */
+        overflow-y: auto; /* Enable scroll if content overflows */
+        border: 1px solid black;
+        margin-left: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <canvas id="renderCanvas"></canvas>
+        <div id="propertiesPanel">
+            <table id="propertiesTable"></table>
+        </div>
+    </div>
+
+    <script src="Pipe.js"></script>
+    <script src="CurvedPipe.js"></script>
+    <script src="PipeFitting.js"></script>
+    <script src="PipeStraight.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
