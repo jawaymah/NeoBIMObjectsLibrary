@@ -1,239 +1,175 @@
-class OvalDuct2 extends Duct {
-    constructor(scene, length, material, width, height) {
-        super(scene, length, material);
+class OvalDuct extends Duct {
+
+    constructor(scene, startPoint, endPoint, material, width, height) {
+        super(scene, BABYLON.Vector3.Distance(startPoint, endPoint), material);
         this.width = width;
         this.height = height;
         this.properties.width = width;
         this.properties.height = height;
-        this.createDuct();
-    }
-
-    createDuct2() {
-        // Create a basic cylinder first
-        this.ductMesh = BABYLON.MeshBuilder.CreateCylinder("ovalDuct", {
-            height: this.length,
-            diameter: 1, // Temporary diameter
-            tessellation: 64 // Higher tessellation for a smoother ellipse
-        }, this.scene);
-
-        // Modify the vertices of the cylinder to create an elliptical cross-section
-        let positions = this.ductMesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        if (positions) {
-            let numberOfPoints = positions.length / 3;
-            for (let i = 0; i < numberOfPoints; i++) {
-                positions[i * 3] *= this.width / 2;  // Scale X-coordinates
-                positions[i * 3 + 1] *= this.height / 2; // Scale Y-coordinates
-            }
-            this.ductMesh.updateVerticesData(BABYLON.VertexBuffer.PositionKind, positions);
-        }
-
-        // Rotate to make horizontal
-        this.ductMesh.rotation.z = Math.PI / 2; // 90 degrees
-        this.ductMesh.properties = this.properties;
-
-        this.updateMaterial(this.material);
-    }
-
-    createDuct3() {
-        const pathArray = [];
-        const ellipsePoints = 64; // Number of points in ellipse
-        const pathPoints = 10; // Number of paths along the tube length
-
-        // Create ellipse paths
-        for (let p = 0; p < pathPoints; p++) {
-            const path = [];
-            for (let i = 0; i <= ellipsePoints; i++) {
-                const angle = (Math.PI * 2 * i) / ellipsePoints;
-                const x = (this.width / 2) * Math.cos(angle);
-                const z = (this.height / 2) * Math.sin(angle);
-                path.push(new BABYLON.Vector3(x, (this.length / (pathPoints - 1)) * p - this.length / 2, z));
-            }
-            pathArray.push(path);
-        }
-
-        // Create ribbon geometry for the duct
-        this.ductMesh = BABYLON.MeshBuilder.CreateRibbon("ovalDuct", {
-            pathArray: pathArray,
-            sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false
-        }, this.scene);
-
-        // Apply material and additional properties as needed
-    }
-
-    createDuct4() {
-        const pathArray = [];
-        const ovalPoints = 64; // Number of points in oval
-        const pathPoints = 10; // Number of paths along the tube length
-
-        // Create oval paths
-        for (let p = 0; p < pathPoints; p++) {
-            const path = [];
-            for (let i = 0; i <= ovalPoints; i++) {
-                const angle = (Math.PI * 2 * i) / ovalPoints;
-                let x, z;
-
-                if (angle <= Math.PI / 2 || angle > 3 * Math.PI / 2) {
-                    // Right side of the oval - use full width
-                    x = (this.width / 2) * Math.cos(angle);
-                    z = (this.height / 2) * Math.sin(angle);
-                } else {
-                    // Left side of the oval - use reduced width to create the oval effect
-                    x = (this.width / 4) * Math.cos(angle); // Change the divisor to control the oval's shape
-                    z = (this.height / 2) * Math.sin(angle);
-                }
-
-                path.push(new BABYLON.Vector3(x, (this.length / (pathPoints - 1)) * p - this.length / 2, z));
-            }
-            pathArray.push(path);
-        }
-
-        // Create ribbon geometry for the duct
-        this.ductMesh = BABYLON.MeshBuilder.CreateRibbon("ovalDuct", {
-            pathArray: pathArray,
-            sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false
-        }, this.scene);
-
-        // Apply material and additional properties as needed
-    }
-
-    createDuct() {
-        const pathArray = [];
-        const pathPoints = 10; // Number of paths along the tube length
-        const cornerPoints = 16; // Points for each rounded corner
-
-        // Calculate dimensions for the straight sections
-        const straightWidth = this.width / 2; // Half the width for the straight section
-        const straightHeight = this.height / 2; // Half the height for the straight section
-
-        // Create oval paths
-        for (let p = 0; p < pathPoints; p++) {
-            const path = [];
-
-            // Bottom straight line
-            for (let i = 0; i <= straightWidth; i++) {
-                path.push(new BABYLON.Vector3(i - straightWidth / 2, (this.length / (pathPoints - 1)) * p - this.length / 2, -straightHeight / 2));
-            }
-
-            // Right arc
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = Math.PI / 2 * i / cornerPoints;
-                const x = straightWidth / 2 + (this.height / 4) * Math.cos(angle);
-                const z = -straightHeight / 2 + (this.height / 4) * Math.sin(angle);
-                path.push(new BABYLON.Vector3(x, (this.length / (pathPoints - 1)) * p - this.length / 2, z));
-            }
-
-            // Top straight line
-            for (let i = 0; i <= straightWidth; i++) {
-                path.push(new BABYLON.Vector3(straightWidth / 2 - i, (this.length / (pathPoints - 1)) * p - this.length / 2, straightHeight / 2));
-            }
-
-            // Left arc
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = Math.PI / 2 + Math.PI / 2 * i / cornerPoints;
-                const x = -straightWidth / 2 + (this.height / 4) * Math.cos(angle);
-                const z = straightHeight / 2 + (this.height / 4) * Math.sin(angle);
-                path.push(new BABYLON.Vector3(x, (this.length / (pathPoints - 1)) * p - this.length / 2, z));
-            }
-
-            pathArray.push(path);
-        }
-
-        // Create ribbon geometry for the duct
-        this.ductMesh = BABYLON.MeshBuilder.CreateRibbon("ovalDuct", {
-            pathArray: pathArray,
-            sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false
-        }, this.scene);
-
-        // Apply material and additional properties as needed
-    }
-
-    // Additional oval duct-specific methods...
-}
-
-class OvalDuct extends Duct {
-    constructor(scene, length, material, width, height, cornerRadius) {
-        super(scene, length, material);
-        this.width = width;      // Width of the rectangle
-        this.height = height;    // Height of the rectangle
-        this.cornerRadius = cornerRadius; // Radius of the corners
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
         this.createDuct();
     }
 
     createDuct() {
         const pathArray = [];
         const pathPoints = 10; // Number of paths along the tube length
-        const cornerPoints = 10; // Points for each rounded corner
+        const ductDirection = this.endPoint.subtract(this.startPoint).normalize();
+        const length = this.length;
 
+        // Create paths
         for (let p = 0; p < pathPoints; p++) {
             const path = [];
-            const zPos = (this.length / (pathPoints - 1)) * p - this.length / 2;
+            const zPos = (length / (pathPoints - 1)) * p - length / 2;
 
-            // Bottom side
-            for (let i = -this.width / 2 + this.cornerRadius; i <= this.width / 2 - this.cornerRadius; i++) {
-                path.push(new BABYLON.Vector3(i, -this.height / 2, zPos));
-            }
-            // Right bottom corner
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = Math.PI / 2 * i / cornerPoints;
-                path.push(new BABYLON.Vector3(
-                    this.width / 2 - this.cornerRadius + this.cornerRadius * Math.cos(angle),
-                    -this.height / 2 + this.cornerRadius * Math.sin(angle),
-                    zPos
-                ));
-            }
-            // Right side
-            for (let i = -this.height / 2 + this.cornerRadius; i <= this.height / 2 - this.cornerRadius; i++) {
-                path.push(new BABYLON.Vector3(this.width / 2, i, zPos));
-            }
-            // Right top corner
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = Math.PI / 2 + Math.PI / 2 * i / cornerPoints;
-                path.push(new BABYLON.Vector3(
-                    this.width / 2 - this.cornerRadius * Math.cos(angle),
-                    this.height / 2 - this.cornerRadius + this.cornerRadius * Math.sin(angle),
-                    zPos
-                ));
-            }
-            // Top side
-            for (let i = this.width / 2 - this.cornerRadius; i >= -this.width / 2 + this.cornerRadius; i--) {
-                path.push(new BABYLON.Vector3(i, this.height / 2, zPos));
-            }
-            // Left top corner
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = Math.PI + Math.PI / 2 * i / cornerPoints;
-                path.push(new BABYLON.Vector3(
-                    -this.width / 2 + this.cornerRadius - this.cornerRadius * Math.cos(angle),
-                    this.height / 2 - this.cornerRadius * Math.sin(angle),
-                    zPos
-                ));
-            }
-            // Left side
-            for (let i = this.height / 2 - this.cornerRadius; i >= -this.height / 2 + this.cornerRadius; i--) {
-                path.push(new BABYLON.Vector3(-this.width / 2, i, zPos));
-            }
-            // Left bottom corner
-            for (let i = 0; i <= cornerPoints; i++) {
-                const angle = -Math.PI / 2 * i / cornerPoints;
-                path.push(new BABYLON.Vector3(
-                    -this.width / 2 + this.cornerRadius * Math.cos(angle),
-                    -this.height / 2 + this.cornerRadius - this.cornerRadius * Math.sin(angle),
-                    zPos
-                ));
-            }
+            // Define corners of the rectangle
+            const corners = [
+                new BABYLON.Vector3(-this.width / 2, -this.height / 2, zPos),
+                new BABYLON.Vector3(this.width / 2, -this.height / 2, zPos),
+                new BABYLON.Vector3(this.width / 2, this.height / 2, zPos),
+                new BABYLON.Vector3(-this.width / 2, this.height / 2, zPos)
+            ];
 
+            corners.forEach(corner => {
+                path.push(corner);
+            });
+            path.push(path[0]); // Close the path by repeating the first corner
             pathArray.push(path);
         }
 
+        // Create ribbon geometry for the duct
         this.ductMesh = BABYLON.MeshBuilder.CreateRibbon("rectangularDuct", {
             pathArray: pathArray,
             sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false,
-            closeArray: true
+            updatable: false
         }, this.scene);
+
+        // Position and orient the duct
+        this.ductMesh.position = this.startPoint.add(this.endPoint).scale(0.5);
+        this.ductMesh.lookAt(this.endPoint);
+
+        this.addRectangularEndCaps(this.width, this.height, length);
+
+        const direction = this.endPoint.subtract(this.startPoint).normalize();
+        const upVector = new BABYLON.Vector3(0, 1, 0);
+        const axis = BABYLON.Vector3.Cross(upVector, direction.normalize()).normalize();
+        // Scale the normalized direction by the distance
+        let widthscaledDirection = axis.scale(this.width/2.0);
+        let heightscaledDirection = upVector.scale(this.height/2.0);
+
+        // Add the scaled direction to the base point to get the new point
+        //p1
+        let p11 = this.startPoint.add(widthscaledDirection);
+        p11 = p11.add(heightscaledDirection);
+        let p21 = this.endPoint.add(widthscaledDirection);
+        p21 = p21.add(heightscaledDirection);
+        let quarterCylinder = this.createCylinderArc(1);
+        this.positionAndOrientCylinder(p11,p21, quarterCylinder);
+
+        let quarterCylinder2 = this.createCylinderArc(2);
+        let p12 = this.startPoint.add(widthscaledDirection);
+        p12 = p12.add(heightscaledDirection.scale(-1));
+        let p22 = this.endPoint.add(widthscaledDirection);
+        p22 = p22.add(heightscaledDirection.scale(-1));
+        this.positionAndOrientCylinder(p12,p22, quarterCylinder2);
+
+        let quarterCylinder3 = this.createCylinderArc(3);
+        let p13 = this.startPoint.add(widthscaledDirection.scale(-1));
+        p13 = p13.add(heightscaledDirection.scale(-1));
+        let p23 = this.endPoint.add(widthscaledDirection.scale(-1));
+        p23 = p23.add(heightscaledDirection.scale(-1));
+        this.positionAndOrientCylinder(p13,p23, quarterCylinder3);
+
+        let quarterCylinder4 = this.createCylinderArc(4);
+        let p14 = this.startPoint.add(widthscaledDirection.scale(-1));
+        p14 = p14.add(heightscaledDirection);
+        let p24 = this.endPoint.add(widthscaledDirection.scale(-1));
+        p24 = p24.add(heightscaledDirection);
+        this.positionAndOrientCylinder(p14,p24, quarterCylinder4);
+
     }
 
-    // ... additional methods ...
+    addRectangularEndCaps(width, height, length) {
+
+        // Create planes for each end
+        const frontCap = BABYLON.MeshBuilder.CreatePlane("frontCap", {
+            width: width,
+            height: height,
+            sideOrientation: BABYLON.Mesh.DOUBLESIDE 
+        }, this.scene);
+        frontCap.position.z = this.startPoint.z;
+        frontCap.rotation.Z = Math.PI / 2;
+
+        const backCap = BABYLON.MeshBuilder.CreatePlane("backCap", {
+            width: width,
+            height: height,
+            sideOrientation: BABYLON.Mesh.DOUBLESIDE 
+        }, this.scene);
+        backCap.position.z = this.endPoint.z;
+        backCap.rotation.Z = -Math.PI / 2;
+
+        // Merge the tube with the end caps
+        this.ductMesh = BABYLON.Mesh.MergeMeshes([this.ductMesh, frontCap, backCap], true, true, undefined, false, true);
+        this.ductMesh.properties = this.properties;
+        this.ductMesh.mepObject = this; 
+    }
+
+    updateWidth(newWidth) {
+        if (this.ductMesh) {
+            this.ductMesh.dispose();
+        }
+        this.width = newWidth;
+        this.createDuct();
+    }
+
+    updateHeight(newHeight) {
+        if (this.ductMesh) {
+            this.ductMesh.dispose();
+        }
+        this.height = newHeight;
+        this.createDuct();
+    }
+
+    updateLength(newLength) {
+        if (this.ductMesh) {
+            this.ductMesh.dispose();
+        }
+        let vectorAB = this.endPoint.subtract(this.startPoint).normalize();
+        this.length = parseFloat(newLength);
+        // Scale the normalized direction by the distance
+        let scaledDirection = vectorAB.scale(this.length);
+
+        // Add the scaled direction to the base point to get the new point
+        this.endPoint = this.startPoint.add(scaledDirection);
+        this.createDuct();
+    }
+    createCylinderArc(corner) {
+        // Create a quarter cylinder
+        let quarterCylinder = BABYLON.MeshBuilder.CreateCylinder("quarterCylinder", {
+            height: this.length,
+            diameter: 2,
+            tessellation: 64,
+            arc: 0.25  // Quarter of a cylinder
+        }, scene);
+
+        // Rotate the cylinder around the X-axis by 90 degrees
+        quarterCylinder.rotation.Z =(corner* Math.PI) / 2;
+        return quarterCylinder;
+    }
+
+    positionAndOrientCylinder(point1, point2, cylinderMesh) {
+        // Position the cylinder at the midpoint between start and end points
+        cylinderMesh.position = point1.add(point2).scale(0.5);
+
+        // Align the cylinder with the direction vector
+        const direction = this.endPoint.subtract(this.startPoint).normalize();
+        const upVector = new BABYLON.Vector3(0, 1, 0);
+        const axis = BABYLON.Vector3.Cross(upVector, direction.normalize()).normalize();
+        const angle = Math.acos(BABYLON.Vector3.Dot(upVector, direction.normalize()));
+
+        // Apply rotation
+        cylinderMesh.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+    }
+
+    // Additional methods...
 }
