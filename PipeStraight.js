@@ -15,9 +15,10 @@ class PipeStraight {
                 wallThickness: '49/256"',
                 size: '6"',
                 pipeSegment: 'Copper - K',
-                
+                material: 'Copper' // Material of the pipe
                 // Add other properties as needed
             };
+            this.material = this.properties.material;
             this.createPipe();
         }
     
@@ -52,8 +53,33 @@ class PipeStraight {
             // Clean up temporary meshes
             outerCylinder.dispose();
             innerCylinder.dispose();
+
+            this.updateMaterial(this.material);
         }
     
+        updateMaterial(material) {
+            this.material = material;
+            // Logic to change the pipe's material properties
+            // For example, change the color or texture based on the material type
+            const materialObj = new BABYLON.StandardMaterial("pipeMaterial", this.scene);
+            switch (material) {
+                case 'Copper':
+                    materialObj.diffuseColor = new BABYLON.Color3(0.85, 0.54, 0.40); // Copper color
+                    break;
+                case 'Cast Iron':
+                    materialObj.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3); // Dark grey
+                    break;
+                case 'PVC':
+                    materialObj.diffuseColor = new BABYLON.Color3(1, 1, 1); // White
+                    break;
+                case 'Standard':
+                    materialObj.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5); // Standard grey
+                    break;
+                // Add more materials as needed
+            }
+            this.pipeMesh.material = materialObj;
+        }
+
         addDraggablePoints() {
             // Create points at the start and end of the pipe
             this.startPoint = BABYLON.MeshBuilder.CreateSphere("startPoint", { diameter: 0.5 }, this.scene);

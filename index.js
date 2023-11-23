@@ -2,33 +2,39 @@
 const canvas = document.getElementById('renderCanvas');
 const engine = new BABYLON.Engine(canvas, true);
 const scene = new BABYLON.Scene(engine);
-//scene.debugLayer.show();
-//const camera = new BABYLON.ArcRotateCamera("Camera", alpha, beta, radius, target, scene);
-//const camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, BABYLON.Vector3.Zero(), scene);
-//camera.attachControl(canvas, true);
-//const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-
 const camera = new BABYLON.ArcRotateCamera("Camera", 3 * Math.PI / 2, 3 * Math.PI / 8, 30, BABYLON.Vector3.Zero());
 camera.attachControl(canvas, true);
 const light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 50, 0));
 
 
-// Sample path for pipe
-const path = [new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(10, 0, 0)];
-const radiusFunction = (i, distance) => i === 0 ? 0.5 : 1;
-
 // Create a Pipe instance
 const hollowTube = new PipeStraight(scene, 10, 3, 2.8, 32);
 hollowTube.backFaceCulling = false;
 hollowTube.addDraggablePoints();
-//const curvedPipe = new CurvedPipe(scene, 5, 0.5, 32);
-//const curvedPipe30 = new CurvedPipe(scene, 5, 0.5, 32, 30);  // 30-degree curve
+
+//CreateElbow
 const curvedPipe30 = new CurvedPipe(scene, 5, 3, 32, 30);  // 30-degree curve
-//const curvedPipe30 = new CurvedPipe2(scene, 5, 0.5, 0.4, 32, 90); // Example: curve radius of 5, outer tube radius 0.5, inner tube radius 0.4, 90-degree curve
 curvedPipe30.backFaceCulling = false;
-//const curvedPipe60 = new CurvedPipe(scene, 5, 0.5, 32, 60);  // 60-degree curve
-//const curvedPipe90 = new CurvedPipe(scene, 5, 0.5, 32, 90);  // 90-degree curve
-//const curvedPipe120 = new CurvedPipe(scene, 5, 0.5, 32, 120); // 120-degree curve
+
+//Create Ducts
+//const ovalDuct = new OvalDuct(scene, 10, 'Steel', 4, 2);
+//const roundDuct = new RoundDuct(scene, 10, 'Aluminum', 3);
+//const rectangleDuct = new RectangleDuct(scene, 10, 'PVC', 5, 3);
+
+const startPoint = new BABYLON.Vector3(0, 0, 10);
+const endPoint = new BABYLON.Vector3(0, 0, 30);
+const rectangularDuct = new RectangleDuct(scene, startPoint, endPoint, 'Steel', 6, 4);
+
+const roundDuctstartPoint = new BABYLON.Vector3(0, -10, 0);
+const roundDuctendPoint = new BABYLON.Vector3(10, -10, 0);
+const roundDuct = new RoundDuct(scene, roundDuctstartPoint, roundDuctendPoint, 'Steel', 2);
+
+const ovalDuctstartPoint = new BABYLON.Vector3(0, -10, 5);
+const ovalDuctendPoint = new BABYLON.Vector3(10, -10, 5);
+//const ovalDuct = new OvalDuct(scene, ovalDuctstartPoint, ovalDuctendPoint, 'Steel', 2);
+
+const ovalDuct = new OvalDuct(scene, 10, 'Steel', 6, 4, 0.5); // Length 10, width 6, height 4, corner radius 0.5
+
 
 engine.runRenderLoop(() => {
     scene.render();
@@ -45,8 +51,9 @@ function updatePropertiesTable(properties, selectedObject) {
 
     if (properties) {
         // Define which properties are editable
-        const editableProperties = ['length', 'diameter', 'material', 'outerRadius', 'innerRadius', 'angle']; // Example editable properties
-
+        const editableProperties = ['length', 'diameter', 'outerRadius', 'innerRadius', 'angle', 'width', 'height']; // Example editable properties
+        const dropdownProperties = { 'material': ['Copper', 'Cast Iron', 'PVC', 'Standard'] }; // Dropdown options
+        const dropdownPropertiesKeys = ['material']; // Dropdown options
         // Create table headers
         let header = table.insertRow();
         header.insertCell(0).innerHTML = '<b>Property</b>';
@@ -71,6 +78,22 @@ function updatePropertiesTable(properties, selectedObject) {
                         // Add additional code here to handle changes to the property
                     };
                     row.insertCell(1).appendChild(input);
+                }  else if (dropdownPropertiesKeys.includes(key)) {
+                    // Create a dropdown cell for special properties
+                    let select = document.createElement('select');
+                    dropdownProperties[key].forEach(optionValue => {
+                        let option = document.createElement('option');
+                        option.value = option.text = optionValue;
+                        select.appendChild(option);
+                    });
+                    select.value = properties[key];
+                    select.onchange = (e) => {
+                        properties[key] = e.target.value;
+                        if (selectedObject && typeof selectedObject['update' + key.charAt(0).toUpperCase() + key.slice(1)] === 'function') {
+                            selectedObject['update' + key.charAt(0).toUpperCase() + key.slice(1)](e.target.value);
+                        }
+                    };
+                    row.insertCell(1).appendChild(select);
                 } else {
                     // Create a regular cell for read-only properties
                     row.insertCell(1).innerHTML = properties[key];
