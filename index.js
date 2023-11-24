@@ -29,9 +29,9 @@ const roundDuctstartPoint = new BABYLON.Vector3(0, -10, 0);
 const roundDuctendPoint = new BABYLON.Vector3(10, -10, 0);
 const roundDuct = new RoundDuct(scene, roundDuctstartPoint, roundDuctendPoint, 'Steel', 2);
 
-//const ovalDuctstartPoint = new BABYLON.Vector3(0, 0, 10);
-//const ovalDuctendPoint = new BABYLON.Vector3(0, 0, 30);
-//const ovalDuct = new OvalDuct(scene, ovalDuctstartPoint, ovalDuctendPoint, 'Steel', 6, 4);
+const ovalDuctstartPoint = new BABYLON.Vector3(0, 0, 10);
+const ovalDuctendPoint = new BABYLON.Vector3(0, 0, 30);
+const ovalDuct = new OvalDuct(scene, ovalDuctstartPoint, ovalDuctendPoint, 'Steel', 6, 4, 3);
 
 
 engine.runRenderLoop(() => {
