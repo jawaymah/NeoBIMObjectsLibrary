@@ -9,7 +9,7 @@ class OvalDuct extends Duct {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.cornerRadius = cornerRadius;   
-
+        this.properties.cornerRadius = cornerRadius;
         this.createDuct();
     }
 
@@ -79,7 +79,7 @@ class OvalDuct extends Duct {
     createOvalPathwithZpos(width, height, cornerRadius, zPos) {
         const pathArray = [];
         const pathPoints = 1;
-        const cornerPoints = 20; // Number of points to define each corner's arc
+        const cornerPoints = 50; // Number of points to define each corner's arc
 
         for (let p = 0; p < pathPoints; p++) {
             const path = [];
@@ -169,14 +169,14 @@ class OvalDuct extends Duct {
             sideOrientation: BABYLON.Mesh.DOUBLESIDE,
             updatable: false
         }, scene);
-        frontCap.position.z = this.startPoint.z;
+        //frontCap.position.z = this.startPoint.z;
         //frontCap.rotation.Z = Math.PI / 2;
         const backCap =  BABYLON.MeshBuilder.CreateRibbon("customPlane", {
             pathArray: ovalPath2,
             sideOrientation: BABYLON.Mesh.DOUBLESIDE,
             updatable: false
         }, scene);
-        backCap.position.z = this.endPoint.z;
+        //backCap.position.z = this.endPoint.z;
         //backCap.rotation.Z = -Math.PI / 2;
         // Merge the tube with the end caps
         this.ductMesh = BABYLON.Mesh.MergeMeshes([this.ductMesh, frontCap, backCap], true, true, undefined, false, true);
@@ -197,6 +197,14 @@ class OvalDuct extends Duct {
             this.ductMesh.dispose();
         }
         this.height = newHeight;
+        this.createDuct();
+    }
+
+    updateCornerRadius(newCornerRadius) {
+        if (this.ductMesh) {
+            this.ductMesh.dispose();
+        }
+        this.cornerRadius = newCornerRadius;
         this.createDuct();
     }
 

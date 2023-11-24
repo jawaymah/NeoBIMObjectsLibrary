@@ -21,9 +21,9 @@ curvedPipe30.backFaceCulling = false;
 //const roundDuct = new RoundDuct(scene, 10, 'Aluminum', 3);
 //const rectangleDuct = new RectangleDuct(scene, 10, 'PVC', 5, 3);
 
-const startPoint = new BABYLON.Vector3(0, 0, 10);
-const endPoint = new BABYLON.Vector3(0, 0, 30);
-const rectangularDuct = new RectangleDuct(scene, startPoint, endPoint, 'Steel', 6, 4);
+//const startPoint = new BABYLON.Vector3(0, 0, 10);
+//const endPoint = new BABYLON.Vector3(0, 0, 30);
+//const rectangularDuct = new RectangleDuct(scene, startPoint, endPoint, 'Steel', 6, 4);
 
 const roundDuctstartPoint = new BABYLON.Vector3(0, -10, 0);
 const roundDuctendPoint = new BABYLON.Vector3(10, -10, 0);
@@ -49,7 +49,7 @@ function updatePropertiesTable(properties, selectedObject) {
 
     if (properties) {
         // Define which properties are editable
-        const editableProperties = ['length', 'diameter', 'outerRadius', 'innerRadius', 'angle', 'width', 'height']; // Example editable properties
+        const editableProperties = ['length', 'diameter', 'outerRadius', 'innerRadius', 'angle', 'width', 'height', 'cornerRadius']; // Example editable properties
         const dropdownProperties = { 'material': ['Copper', 'Cast Iron', 'PVC', 'Standard'] }; // Dropdown options
         const dropdownPropertiesKeys = ['material']; // Dropdown options
         // Create table headers
