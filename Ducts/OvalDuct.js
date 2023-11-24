@@ -13,6 +13,21 @@ class OvalDuct extends Duct {
         this.createDuct();
     }
 
+    isPointClose(previousPoint, newPoint, threshold) {
+        return BABYLON.Vector3.Distance(previousPoint, newPoint) < threshold;
+    }
+
+    isPointTooClose(existingPoints, newPoint, threshold) {
+        return existingPoints.some(existingPoint => 
+            BABYLON.Vector3.Distance(existingPoint, newPoint) < threshold);
+    }
+
+    pushPointToPath(path, newPoint, threshold) {
+        // Check if the new point is too close to any existing point
+        //if (!this.isPointTooClose(path, newPoint, threshold)) {
+            path.push(newPoint);
+        //}
+    }
     createOvalPath(width, height, cornerRadius) {
         const pathArray = [];
         const pathPoints = 2;
@@ -31,7 +46,8 @@ class OvalDuct extends Duct {
                     const angle = startAngle + (Math.PI / 2) * (i / cornerPoints);
                     const x = centerX + cornerRadius * Math.cos(angle);
                     const y = centerY + cornerRadius * Math.sin(angle);
-                    path.push(new BABYLON.Vector3(x, y, zPos));
+                    //path.push(new BABYLON.Vector3(x, y, zPos));
+                    this.pushPointToPath(path,new BABYLON.Vector3(x, y, zPos), 0.1);
                 }
             };
         
@@ -41,7 +57,8 @@ class OvalDuct extends Duct {
             // Bottom side
             for (let i = 1; i < cornerPoints; i++) {
                 const x = -width / 2 + cornerRadius + (i / cornerPoints) * (width - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(x, -height / 2, zPos));
+                //path.push(new BABYLON.Vector3(x, -height / 2, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(x, -height / 2, zPos), 0.1);
             }
         
             // Bottom right corner arc
@@ -50,7 +67,8 @@ class OvalDuct extends Duct {
             // Right side
             for (let i = 1; i < cornerPoints; i++) {
                 const y = -height / 2 + cornerRadius + (i / cornerPoints) * (height - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(width / 2, y, zPos));
+                //path.push(new BABYLON.Vector3(width / 2, y, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(width / 2, y, zPos), 0.1);
             }
         
             // Top right corner arc
@@ -59,7 +77,8 @@ class OvalDuct extends Duct {
             // Top side
             for (let i = 1; i < cornerPoints; i++) {
                 const x = width / 2 - cornerRadius - (i / cornerPoints) * (width - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(x, height / 2, zPos));
+                //path.push(new BABYLON.Vector3(x, height / 2, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(x, height / 2, zPos), 0.1);
             }
         
             // Top left corner arc
@@ -68,7 +87,8 @@ class OvalDuct extends Duct {
             // Left side
             for (let i = 1; i < cornerPoints; i++) {
                 const y = height / 2 - cornerRadius - (i / cornerPoints) * (height - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(-width / 2, y, zPos));
+                //path.push(new BABYLON.Vector3(-width / 2, y, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(-width / 2, y, zPos), 0.1);
             }
             path.push(path[0]); // Close the path by repeating the first corner
             pathArray.push(path);
@@ -92,7 +112,8 @@ class OvalDuct extends Duct {
                     const angle = startAngle + (Math.PI / 2) * (i / cornerPoints);
                     const x = centerX + cornerRadius * Math.cos(angle);
                     const y = centerY + cornerRadius * Math.sin(angle);
-                    path.push(new BABYLON.Vector3(x, y, zPos));
+                    //path.push(new BABYLON.Vector3(x, y, zPos));
+                    this.pushPointToPath(path,new BABYLON.Vector3(x, y, zPos), 0.1);
                 }
             };
         
@@ -102,7 +123,8 @@ class OvalDuct extends Duct {
             // Bottom side
             for (let i = 1; i < cornerPoints; i++) {
                 const x = -width / 2 + cornerRadius + (i / cornerPoints) * (width - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(x, -height / 2, zPos));
+                //path.push(new BABYLON.Vector3(x, -height / 2, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(x, -height / 2, zPos), 0.1);
             }
         
             // Bottom right corner arc
@@ -111,7 +133,8 @@ class OvalDuct extends Duct {
             // Right side
             for (let i = 1; i < cornerPoints; i++) {
                 const y = -height / 2 + cornerRadius + (i / cornerPoints) * (height - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(width / 2, y, zPos));
+                //path.push(new BABYLON.Vector3(width / 2, y, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(width / 2, y, zPos), 0.1);
             }
         
             // Top right corner arc
@@ -120,7 +143,8 @@ class OvalDuct extends Duct {
             // Top side
             for (let i = 1; i < cornerPoints; i++) {
                 const x = width / 2 - cornerRadius - (i / cornerPoints) * (width - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(x, height / 2, zPos));
+                //path.push(new BABYLON.Vector3(x, height / 2, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(x, height / 2, zPos), 0.1);
             }
         
             // Top left corner arc
@@ -129,7 +153,8 @@ class OvalDuct extends Duct {
             // Left side
             for (let i = 1; i < cornerPoints; i++) {
                 const y = height / 2 - cornerRadius - (i / cornerPoints) * (height - 2 * cornerRadius);
-                path.push(new BABYLON.Vector3(-width / 2, y, zPos));
+                //path.push(new BABYLON.Vector3(-width / 2, y, zPos));
+                this.pushPointToPath(path,new BABYLON.Vector3(-width / 2, y, zPos), 0.1);
             }
             path.push(path[0]); // Close the path by repeating the first corner
             pathArray.push(path);
@@ -167,14 +192,16 @@ class OvalDuct extends Duct {
         const frontCap =  BABYLON.MeshBuilder.CreateRibbon("customPlane", {
             pathArray: ovalPath1,
             sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false
+            updatable: false,
+            closePath: true
         }, scene);
         //frontCap.position.z = this.startPoint.z;
         //frontCap.rotation.Z = Math.PI / 2;
         const backCap =  BABYLON.MeshBuilder.CreateRibbon("customPlane", {
             pathArray: ovalPath2,
             sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-            updatable: false
+            updatable: false,
+            closePath: true
         }, scene);
         //backCap.position.z = this.endPoint.z;
         //backCap.rotation.Z = -Math.PI / 2;
